@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 from tkinter import filedialog
 import pickle
 from googlesearch import search
+from colores import *
 
 # import tensorflow.keras as keras
 import tensorflow as tf
@@ -78,7 +79,7 @@ def removerBackground(imagen_path):
     if 'jpg' in input_path:
         x = input_path.split(".jpg")
 
-        output_path = x[0] + "SBG.jpg"
+        output_path = x[0] + "SBG.png"
 
     if 'png' in input_path:
         x = input_path.split(".png")
@@ -123,6 +124,17 @@ def getColoresImg(imagen_pathSB):
     return rgb_colors
 
 
+def filtrar_colores(imgPath) -> str:
+    ruta_imagen_sinBG = removerBackground(imgPath)
+    lista_colores_rgb = getColoresImg(ruta_imagen_sinBG)
+    lista_colores_nombres = []
+    for color in lista_colores_rgb:
+        nombre_color = findclosest(color)
+        lista_colores_nombres.append(nombre_color)
+    nombre_color = max(set(lista_colores_nombres), key=lista_colores_nombres.count)
+    return nombre_color
+
+
 def getImg():
     global imgNew
     root.filename = filedialog.askopenfilename(initialdir="./images", title="Select a file",
@@ -133,19 +145,51 @@ def getImg():
     imgLabel["image"] = imgNew
     print(root.filename)
 
-    tipo_prenda = clasificarPrenda(root.filename)
+    root.tipo_prenda = clasificarPrenda(root.filename)
+    root.colores_rgb = filtrar_colores(root.filename)
 
-    ruta_imagen_sinBG = removerBackground(root.filename)
-
-    colores_rgb = getColoresImg(ruta_imagen_sinBG)
+    #print("color: "+ root.tipo_prenda)
+    #print(root.colores_rgb)
 
 
 def searchGoogle():
-    query_example_tipo = "camisa"
-    query_example_color = "roja"
+    query_example_tipo = root.tipo_prenda
+    query_example_color = root.colores_rgb
     price = inputField_price.get()
 
-    #AQUI EL CODIGO CORTADO
+    query = query_example_tipo + " " + query_example_color + " a " + price + " dolares o menos"
+    resultados = []
+
+    for j in search(query, lang="es", country="countryEC", tld="co.in", num=5, stop=5, pause=2):
+        resultados.append(j)
+
+    myLabel2 = Label(secondFrame, text="Resultados de busqueda")
+    myLabel2.grid(row=4, column=0, columnspan=2)
+    textBox = Text(secondFrame, height=15, width=60)
+    textBox.grid(row=5, column=0, columnspan=2)
+    textBox.insert(END, '-' + resultados[0] + '\n')
+    textBox.insert(END, '-' + resultados[1] + '\n')
+    textBox.insert(END, '-' + resultados[2] + '\n')
+    textBox.insert(END, '-' + resultados[3] + '\n')
+    textBox.insert(END, '-' + resultados[4] + '\n')
+    textBox.config(state="disable")
+
+    recommendationQuery = searchRecommendations(query)
+    resultados2 = []
+
+    for j in search(recommendationQuery, lang="es", country="countryEC", tld="co.in", num=5, stop=5, pause=2):
+        resultados2.append(j)
+
+    myLabel3 = Label(secondFrame, text="Recomendacion de productos similares")
+    myLabel3.grid(row=6, column=0, columnspan=2)
+    textBox2 = Text(secondFrame, height=15, width=60)
+    textBox2.grid(row=7, column=0, columnspan=2)
+    textBox2.insert(END, '-' + resultados2[0] + '\n')
+    textBox2.insert(END, '-' + resultados2[1] + '\n')
+    textBox2.insert(END, '-' + resultados2[2] + '\n')
+    textBox2.insert(END, '-' + resultados2[3] + '\n')
+    textBox2.insert(END, '-' + resultados2[4] + '\n')
+    textBox2.config(state="disable")
 
 
 def get_recommendations(product, model, vector):
@@ -193,7 +237,7 @@ secondFrame = Frame(myCanvas)
 myCanvas.create_window((0, 0), window=secondFrame, anchor="nw")
 
 # Creating widgets
-btnLoadImg = Button(secondFrame, text="seleccionar imagen", command=getImg, padx=60)
+btnLoadImg = Button(secondFrame, text="SELECCIONAR IMAGEN", command=getImg, padx=60)
 
 imgDefault = Image.open("default.jpg")
 imgDefault = imgDefault.resize((300, 300), Image.LANCZOS)
@@ -203,7 +247,7 @@ imgLabel = Label(secondFrame, image=imgDisplay)
 myLabel1 = Label(secondFrame, text="Ingrese el precio de referencia:")
 inputField_price = Entry(secondFrame)
 
-btnSearch = Button(secondFrame, text="realizar busqueda", command=searchGoogle)
+btnSearch = Button(secondFrame, text="REALIZAR BUSQUEDA", command=searchGoogle)
 
 #myLabel3 = Label(root, text="Recomendaciones de productos relacionados")
 
