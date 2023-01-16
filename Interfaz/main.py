@@ -150,6 +150,7 @@ def getImg():
 
     #print("color: "+ root.tipo_prenda)
     #print(root.colores_rgb)
+    secondPart()
 
 
 def searchGoogle():
@@ -164,9 +165,9 @@ def searchGoogle():
         resultados.append(j)
 
     myLabel2 = Label(secondFrame, text="Resultados de busqueda")
-    myLabel2.grid(row=4, column=0, columnspan=2)
+    myLabel2.grid(row=6, column=0, columnspan=2)
     textBox = Text(secondFrame, height=15, width=60)
-    textBox.grid(row=5, column=0, columnspan=2)
+    textBox.grid(row=7, column=0, columnspan=2)
     textBox.insert(END, '-' + resultados[0] + '\n')
     textBox.insert(END, '-' + resultados[1] + '\n')
     textBox.insert(END, '-' + resultados[2] + '\n')
@@ -181,9 +182,9 @@ def searchGoogle():
         resultados2.append(j)
 
     myLabel3 = Label(secondFrame, text="Recomendacion de productos similares")
-    myLabel3.grid(row=6, column=0, columnspan=2)
+    myLabel3.grid(row=8, column=0, columnspan=2)
     textBox2 = Text(secondFrame, height=15, width=60)
-    textBox2.grid(row=7, column=0, columnspan=2)
+    textBox2.grid(row=9, column=0, columnspan=2)
     textBox2.insert(END, '-' + resultados2[0] + '\n')
     textBox2.insert(END, '-' + resultados2[1] + '\n')
     textBox2.insert(END, '-' + resultados2[2] + '\n')
@@ -249,17 +250,22 @@ inputField_price = Entry(secondFrame)
 
 btnSearch = Button(secondFrame, text="REALIZAR BUSQUEDA", command=searchGoogle)
 
-#myLabel3 = Label(root, text="Recomendaciones de productos relacionados")
-
 # Shoving widgets onto the screen
 btnLoadImg.grid(row=0, column=0, columnspan=2)
 imgLabel.grid(row=1, column=0, columnspan=2)
 
-myLabel1.grid(row=2, column=0, padx=1, pady=1)
-inputField_price.grid(row=2, column=1)
 
-btnSearch.grid(row=3, column=0, columnspan=2)
+def secondPart():
+    myTipoPrenda = Label(secondFrame, text="TIPO PRENDA: " + root.tipo_prenda)
+    myColor = Label(secondFrame, text="COLOR: " + root.colores_rgb)
 
-#myLabel3.grid(row=4, column=1)
+    myTipoPrenda.grid(row=2, column=0, padx=1, pady=1, columnspan=2)
+    myColor.grid(row=3, column=0, padx=1, pady=1, columnspan=2)
+    myLabel1.grid(row=4, column=0, padx=1, pady=1)
+    inputField_price.grid(row=4, column=1)
+    btnSearch.grid(row=5, column=0, columnspan=2)
+
+
+#btnSearch.grid(row=3, column=0, columnspan=2)
 
 root.mainloop()
